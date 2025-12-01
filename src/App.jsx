@@ -92,8 +92,8 @@ const ResultRow = ({ label, value, subtext, highlight = false, isGood = null }) 
       {subtext && <div className="text-xs text-slate-500 dark:text-slate-400">{subtext}</div>}
     </div>
     <div className={`text-right font-bold ${isGood === true ? 'text-green-600 dark:text-green-400' :
-        isGood === false ? 'text-red-600 dark:text-red-400' :
-          'text-slate-800 dark:text-slate-100'
+      isGood === false ? 'text-red-600 dark:text-red-400' :
+        'text-slate-800 dark:text-slate-100'
       }`}>
       {value}
     </div>
@@ -266,7 +266,7 @@ const PrivacyPolicy = () => (
 
           <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">4. Contact</h3>
           <p>
-            If you have questions about this policy, please contact privacy@finalyze.ai.
+            If you have questions about this policy, please contact m.nath190702@gmail.com.
           </p>
         </div>
       </Card>
@@ -485,8 +485,8 @@ const FinanceTool = () => {
                       key={key}
                       onClick={() => setLoanType(key)}
                       className={`p-3 rounded-lg border text-sm flex flex-col items-center gap-1 transition-all ${loanType === key
-                          ? 'bg-indigo-50 dark:bg-indigo-900/40 border-indigo-500 text-indigo-700 dark:text-indigo-300'
-                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                        ? 'bg-indigo-50 dark:bg-indigo-900/40 border-indigo-500 text-indigo-700 dark:text-indigo-300'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
                         }`}
                     >
                       <span className="text-lg">{type.icon}</span>
@@ -593,8 +593,8 @@ const FinanceTool = () => {
         <div className="lg:col-span-7 space-y-6">
           <Card className="border-0 bg-transparent shadow-none dark:bg-transparent">
             <div className={`p-6 rounded-t-xl border-l-8 shadow-lg ${verdict.winner === 'credit' ? 'border-green-500 bg-green-50/90 dark:bg-green-900/30' :
-                verdict.winner === 'cash' ? 'border-purple-500 bg-purple-50/90 dark:bg-purple-900/30' :
-                  'border-yellow-500 bg-yellow-50/90 dark:bg-yellow-900/30'
+              verdict.winner === 'cash' ? 'border-purple-500 bg-purple-50/90 dark:bg-purple-900/30' :
+                'border-yellow-500 bg-yellow-50/90 dark:bg-yellow-900/30'
               }`}>
               <div className="flex items-start justify-between">
                 <div>
@@ -602,8 +602,8 @@ const FinanceTool = () => {
                   <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{verdict.desc}</p>
                 </div>
                 <div className={`p-3 rounded-full ${verdict.winner === 'credit' ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' :
-                    verdict.winner === 'cash' ? 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300' :
-                      'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300'
+                  verdict.winner === 'cash' ? 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300' :
+                    'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300'
                   }`}>
                   {verdict.winner === 'credit' ? <TrendingUp className="w-8 h-8" /> :
                     verdict.winner === 'cash' ? <Banknote className="w-8 h-8" /> : <RefreshCcw className="w-8 h-8" />}
