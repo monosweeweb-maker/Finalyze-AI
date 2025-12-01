@@ -27,6 +27,15 @@ import {
 } from 'lucide-react';
 
 // --- Constants & Defaults ---
+
+// ==========================================
+// 🎨 CUSTOMIZE YOUR LOGO HERE
+// Paste your image URL inside the quotes. 
+// Example: "/logo.png" (if in public folder) or "https://mysite.com/logo.png"
+// Leave as null to use the default Calculator icon.
+const USER_CUSTOM_ICON_URL = "/logo.png";
+// ==========================================
+
 const LOAN_TYPES = {
   personal: { name: 'Personal Loan', defaultRate: 11.5, icon: '👤' },
   home: { name: 'Home Loan', defaultRate: 8.5, icon: '🏠' },
@@ -770,6 +779,24 @@ export default function App() {
   const [view, setView] = useState('landing'); // landing, app, privacy
   const [theme, setTheme] = useState('light');
 
+  // NEW: Dynamic Favicon & Title Effect
+  useEffect(() => {
+    // 1. Update Title
+    document.title = "Finalyze AI";
+
+    // 2. Update Favicon
+    if (USER_CUSTOM_ICON_URL) {
+      let link = document.querySelector("link[rel*='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+      link.type = 'image/png';
+      link.href = USER_CUSTOM_ICON_URL;
+    }
+  }, []);
+
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -787,9 +814,13 @@ export default function App() {
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('landing')}>
-            <div className="bg-indigo-600 text-white p-1.5 rounded-lg">
-              <Calculator className="w-5 h-5" />
-            </div>
+            {USER_CUSTOM_ICON_URL ? (
+              <img src={USER_CUSTOM_ICON_URL} alt="Logo" className="w-8 h-8 rounded-lg object-contain bg-indigo-50 dark:bg-slate-800" />
+            ) : (
+              <div className="bg-indigo-600 text-white p-1.5 rounded-lg">
+                <Calculator className="w-5 h-5" />
+              </div>
+            )}
             <span className="font-bold text-xl text-slate-900 dark:text-white tracking-tight">Finalyze <span className="text-indigo-600 dark:text-indigo-400">AI</span></span>
           </div>
 
