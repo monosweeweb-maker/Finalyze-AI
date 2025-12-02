@@ -37,7 +37,7 @@ const USER_CUSTOM_ICON_URL = "/logo.png";
 // 🔑 GEMINI API CONFIGURATION
 // 1. Get a FREE API key here: https://aistudio.google.com/app/apikey
 // 2. Paste it inside the quotes below.
-const GEMINI_API_KEY = "AIzaSyBRL_gA68samAn5xTP3_hJeGDKoIPADMkc"; // Example: "AIzaSy..."
+const GEMINI_API_KEY = "AIzaSyBRL_gA68samAn5xTP3_hJeGDKoIPADMkc";
 // ==========================================
 
 const LOAN_TYPES = {
@@ -450,17 +450,24 @@ const FinanceTool = () => {
     `;
 
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+      // CHANGED: Uses standard gemini-1.5-flash model which works with all free keys
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
       });
       const data = await response.json();
+
+      // CHANGED: Better error handling to show exactly why it failed
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
+
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
       setAiAnalysis(text || "Could not generate analysis. Please try again.");
     } catch (e) {
       console.error(e);
-      setAiAnalysis("Unable to connect to AI Advisor. Check your internet connection or API key.");
+      setAiAnalysis(`Unable to connect to AI Advisor. \nError: ${e.message}`);
     }
     setIsAiLoading(false);
   };
