@@ -450,8 +450,8 @@ const FinanceTool = () => {
     `;
 
     try {
-      // CHANGED: Uses standard gemini-1.5-flash model which works with all free keys
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      // CHANGED: Updated model to gemini-2.5-flash-preview-09-2025 to match your API key/version
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
