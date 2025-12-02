@@ -33,6 +33,13 @@ import {
 const USER_CUSTOM_ICON_URL = "/logo.png";
 // ==========================================
 
+// ==========================================
+// 🔑 GEMINI API CONFIGURATION
+// 1. Get a FREE API key here: https://aistudio.google.com/app/apikey
+// 2. Paste it inside the quotes below.
+const GEMINI_API_KEY = "AIzaSyBRL_gA68samAn5xTP3_hJeGDKoIPADMkc"; // Example: "AIzaSy..."
+// ==========================================
+
 const LOAN_TYPES = {
   personal: { name: 'Personal Loan', defaultRate: 11.5, icon: '👤' },
   home: { name: 'Home Loan', defaultRate: 8.5, icon: '🏠' },
@@ -414,7 +421,14 @@ const FinanceTool = () => {
 
   const handleAIAnalysis = async () => {
     setIsAiLoading(true);
-    const apiKey = ""; // Runtime injection
+    // Use the configured key
+    const apiKey = GEMINI_API_KEY;
+
+    if (!apiKey || apiKey === "") {
+      setAiAnalysis("⚠️ Configuration Missing: Please set your GEMINI_API_KEY in the code to use this feature.\n\nGet a free key from: https://aistudio.google.com/app/apikey");
+      setIsAiLoading(false);
+      return;
+    }
 
     const prompt = `
       Act as a wise, friendly financial expert.
@@ -446,7 +460,7 @@ const FinanceTool = () => {
       setAiAnalysis(text || "Could not generate analysis. Please try again.");
     } catch (e) {
       console.error(e);
-      setAiAnalysis("Unable to connect to AI Advisor. Check your connection.");
+      setAiAnalysis("Unable to connect to AI Advisor. Check your internet connection or API key.");
     }
     setIsAiLoading(false);
   };
