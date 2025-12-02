@@ -30,9 +30,6 @@ import {
 
 // ==========================================
 // 🎨 CUSTOMIZE YOUR LOGO HERE
-// Paste your image URL inside the quotes. 
-// Example: "/logo.png" (if in public folder) or "https://mysite.com/logo.png"
-// Leave as null to use the default Calculator icon.
 const USER_CUSTOM_ICON_URL = "/logo.png";
 // ==========================================
 
@@ -54,9 +51,10 @@ const INVESTMENT_TYPES = {
   gold: { name: 'Gold (Historical)', return: 10.0 },
 };
 
+// 1. Reordered so INR is first (for better UX if we iterated)
 const CURRENCIES = {
-  USD: { code: 'USD', locale: 'en-US', symbol: '$', name: 'USD ($)' },
   INR: { code: 'INR', locale: 'en-IN', symbol: '₹', name: 'INR (₹)' },
+  USD: { code: 'USD', locale: 'en-US', symbol: '$', name: 'USD ($)' },
   EUR: { code: 'EUR', locale: 'de-DE', symbol: '€', name: 'EUR (€)' },
   GBP: { code: 'GBP', locale: 'en-GB', symbol: '£', name: 'GBP (£)' },
   JPY: { code: 'JPY', locale: 'ja-JP', symbol: '¥', name: 'JPY (¥)' },
@@ -101,8 +99,8 @@ const ResultRow = ({ label, value, subtext, highlight = false, isGood = null }) 
       {subtext && <div className="text-xs text-slate-500 dark:text-slate-400">{subtext}</div>}
     </div>
     <div className={`text-right font-bold ${isGood === true ? 'text-green-600 dark:text-green-400' :
-      isGood === false ? 'text-red-600 dark:text-red-400' :
-        'text-slate-800 dark:text-slate-100'
+        isGood === false ? 'text-red-600 dark:text-red-400' :
+          'text-slate-800 dark:text-slate-100'
       }`}>
       {value}
     </div>
@@ -138,9 +136,7 @@ const LandingPage = ({ onStart }) => (
               >
                 Launch Calculator <ArrowRight className="w-5 h-5" />
               </button>
-              <button className="px-8 py-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
-                View Demo
-              </button>
+              {/* REMOVED: View Demo button */}
             </div>
           </div>
 
@@ -286,7 +282,8 @@ const PrivacyPolicy = () => (
 // --- 3. FINANCE TOOL COMPONENT (The Calculator) ---
 const FinanceTool = () => {
   const [activeTab, setActiveTab] = useState('compare');
-  const [currency, setCurrency] = useState('USD');
+  // 2. Set Default Currency to INR
+  const [currency, setCurrency] = useState('INR');
   const [showCalculations, setShowCalculations] = useState(false);
 
   const [loanType, setLoanType] = useState('personal');
@@ -299,7 +296,8 @@ const FinanceTool = () => {
   const [hasCash, setHasCash] = useState(true);
   const [investmentReturn, setInvestmentReturn] = useState(8.0);
   const [investmentType, setInvestmentType] = useState('mutual_funds');
-  const [inflation, setInflation] = useState(INFLATION_DEFAULTS.USD);
+  // 3. Set Default Inflation to INR rates
+  const [inflation, setInflation] = useState(INFLATION_DEFAULTS.INR);
   const [useInflation, setUseInflation] = useState(false);
   const [extraPayment, setExtraPayment] = useState(0);
 
@@ -386,9 +384,6 @@ const FinanceTool = () => {
   const getVerdict = () => {
     if (!hasCash) return { winner: 'credit', title: 'Loan Required', desc: "Focus on minimizing interest via prepayments since cash isn't available.", color: 'blue' };
 
-    // UPDATED LOGIC: Compare actual money values, not just rates.
-    // Because loans are on reducing balance and investments are on full principal, 
-    // you can often profit even if Loan Rate > Investment Rate.
     const netBenefit = calculations.investmentGain - calculations.totalInterestPaid;
 
     if (netBenefit > 0) {
@@ -494,8 +489,8 @@ const FinanceTool = () => {
                       key={key}
                       onClick={() => setLoanType(key)}
                       className={`p-3 rounded-lg border text-sm flex flex-col items-center gap-1 transition-all ${loanType === key
-                        ? 'bg-indigo-50 dark:bg-indigo-900/40 border-indigo-500 text-indigo-700 dark:text-indigo-300'
-                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                          ? 'bg-indigo-50 dark:bg-indigo-900/40 border-indigo-500 text-indigo-700 dark:text-indigo-300'
+                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
                         }`}
                     >
                       <span className="text-lg">{type.icon}</span>
@@ -514,7 +509,7 @@ const FinanceTool = () => {
                   </span>
                   <input
                     type="number"
-                    value={amount}
+                    value={amount || ''}
                     onChange={(e) => setAmount(Number(e.target.value))}
                     className="w-full pl-8 pr-4 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-slate-700 dark:text-white transition-colors"
                   />
@@ -561,22 +556,27 @@ const FinanceTool = () => {
               {hasCash && (
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-800 animate-in fade-in">
                   <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">If invested instead:</label>
-                  <select
-                    value={investmentType}
-                    onChange={(e) => setInvestmentType(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg mb-2 text-sm text-slate-700 dark:text-white"
-                  >
-                    {Object.entries(INVESTMENT_TYPES).map(([key, item]) => (
-                      <option key={key} value={key}>{item.name} (~{item.return}%)</option>
-                    ))}
-                    <option value="custom">Custom Rate</option>
-                  </select>
-                  {investmentType === 'custom' && (
-                    <div className="flex items-center gap-2">
-                      <input type="number" value={investmentReturn} onChange={(e) => setInvestmentReturn(Number(e.target.value))} className="w-full px-3 py-2 border rounded-lg bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
-                      <span className="text-slate-500">%</span>
+                  <div className="flex gap-2">
+                    <select
+                      value={investmentType}
+                      onChange={(e) => setInvestmentType(e.target.value)}
+                      className="w-2/3 px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg text-sm text-slate-700 dark:text-white"
+                    >
+                      {Object.entries(INVESTMENT_TYPES).map(([key, item]) => (
+                        <option key={key} value={key}>{item.name}</option>
+                      ))}
+                      <option value="custom">Custom</option>
+                    </select>
+                    <div className="w-1/3 flex items-center relative">
+                      <input
+                        type="number"
+                        value={investmentReturn}
+                        onChange={(e) => setInvestmentReturn(Number(e.target.value))}
+                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 dark:text-white"
+                      />
+                      <span className="absolute right-3 text-slate-500">%</span>
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
 
@@ -602,8 +602,8 @@ const FinanceTool = () => {
         <div className="lg:col-span-7 space-y-6">
           <Card className="border-0 bg-transparent shadow-none dark:bg-transparent">
             <div className={`p-6 rounded-t-xl border-l-8 shadow-lg ${verdict.winner === 'credit' ? 'border-green-500 bg-green-50/90 dark:bg-green-900/30' :
-              verdict.winner === 'cash' ? 'border-purple-500 bg-purple-50/90 dark:bg-purple-900/30' :
-                'border-yellow-500 bg-yellow-50/90 dark:bg-yellow-900/30'
+                verdict.winner === 'cash' ? 'border-purple-500 bg-purple-50/90 dark:bg-purple-900/30' :
+                  'border-yellow-500 bg-yellow-50/90 dark:bg-yellow-900/30'
               }`}>
               <div className="flex items-start justify-between">
                 <div>
@@ -611,8 +611,8 @@ const FinanceTool = () => {
                   <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{verdict.desc}</p>
                 </div>
                 <div className={`p-3 rounded-full ${verdict.winner === 'credit' ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' :
-                  verdict.winner === 'cash' ? 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300' :
-                    'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300'
+                    verdict.winner === 'cash' ? 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300' :
+                      'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300'
                   }`}>
                   {verdict.winner === 'credit' ? <TrendingUp className="w-8 h-8" /> :
                     verdict.winner === 'cash' ? <Banknote className="w-8 h-8" /> : <RefreshCcw className="w-8 h-8" />}
@@ -777,7 +777,23 @@ const FinanceTool = () => {
 // --- 4. MAIN APP SHELL ---
 export default function App() {
   const [view, setView] = useState('landing'); // landing, app, privacy
-  const [theme, setTheme] = useState('light');
+
+  // 4. Initialization Logic
+  const [theme, setTheme] = useState(() => {
+    // 1. Check LocalStorage
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        return savedTheme;
+      }
+      // 2. Check System Preference
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+    }
+    // 3. Default to light
+    return 'light';
+  });
 
   // NEW: Dynamic Favicon & Title Effect
   useEffect(() => {
@@ -798,17 +814,22 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    // 5. Apply class to <HTML> tag specifically.
+    console.log('Switching theme to:', theme);
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [theme]);
 
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
   return (
-    <div className={`min-h-screen font-sans transition-colors duration-300 ${theme === 'dark' ? 'dark' : ''}`}>
+    // 6. Removed "dark" class from wrapper div to avoid double-application confusion
+    <div className={`min-h-screen font-sans transition-colors duration-300`}>
 
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
